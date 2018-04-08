@@ -421,7 +421,7 @@ struct TrycatchContext {
     void* edi;
     uint32_t mxcsr;
     uint16_t fpucw;
-#elif defined(DARWIN) && defined(RVM_THUMBV7)
+#elif defined(RVM_THUMBV7)
     void* sp; // r13
     void* r4;
     void* r5;
@@ -439,7 +439,7 @@ struct TrycatchContext {
     double d13;
     double d14;
     double d15;
-#elif defined(DARWIN) && defined(RVM_ARM64)
+#elif defined(RVM_ARM64)
     void* sp; // x31
     void* x19;
     void* x20;

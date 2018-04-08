@@ -12,14 +12,20 @@ Options:
   --build=[release|debug] Specifies the build type. If not set both release
                           and debug versions of the libraries will be built.
   --target=...            Specifies the target(s) to build for. Supported 
-                          targets are macosx-x86_64, macosx-x86, ios-x86_64,
-                          ios-x86, ios-thumbv7, ios-arm64, linux-x86_64, 
-                          linux-x86. Enclose multiple targets in quotes and 
-                          separate with spaces or specify --target multiple
-                          times. If not set the current host OS determines the
-                          targets. macosx-x86_64, macosx-x86, ios-x86_64,
-                          ios-x86, ios-thumbv7 and ios-arm64 on MacOSX and
-                          linux-x86_64 and linux-x86 on Linux.
+                          targets are:
+                            macosx-x86_64
+                            macosx-x86
+                            ios-x86_64
+                            ios-x86
+                            ios-thumbv7
+                            ios-arm64
+                            linux-x86_64
+                            linux-x86
+                            linux-arm64
+                          Enclose multiple targets in quotes and separate with
+                          spaces or specify --target multiple times. If not set
+                          the current host OS determines the targets (macosx-*
+                          and ios-* on macOS, linux-* on Linux).
   --verbose               Enable verbose output during the build.
   --clean                 Cleans the build dir before starting the build.
   --help                  Displays this information and exits.
@@ -53,7 +59,7 @@ if [ "x$TARGETS" = 'x' ]; then
     TARGETS="macosx-x86_64 macosx-x86 ios-x86_64 ios-x86 ios-thumbv7 ios-arm64"
     ;;
   Linux)
-    TARGETS="linux-x86_64 linux-x86"
+    TARGETS="linux-x86_64 linux-x86 linux-arm64"
     ;;
   *)
     echo "Unsupported OS: $OS"
@@ -67,7 +73,7 @@ fi
 
 # Validate targets
 for T in $TARGETS; do
-  if ! [[ $T =~ (macosx-(x86_64|x86))|(ios-(x86_64|x86|thumbv7|arm64))|(linux-(x86_64|x86)) ]] ; then
+  if ! [[ $T =~ (macosx-(x86_64|x86))|(ios-(x86_64|x86|thumbv7|arm64))|(linux-(x86_64|x86|arm64)) ]] ; then
     echo "Unsupported target: $T"
     exit 1
   fi
@@ -113,7 +119,12 @@ for T in $TARGETS; do
     BUILD_TYPE=$B
     mkdir -p "$BASE/target/build/$T-$B"
     rm -rf "$BASE/binaries/$OS/$ARCH/$B"
-    bash -c "cd '$BASE/target/build/$T-$B'; cmake -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOS=$OS -DARCH=$ARCH '$BASE'; make $VERBOSE install"
+    if [ -f "$BASE/toolchains/$OS-$ARCH.cmake" ]; then
+      TOOLCHAIN_ARGS="-DCMAKE_TOOLCHAIN_FILE=$BASE/toolchains/$OS-$ARCH.cmake"
+    else
+      TOOLCHAIN_ARGS="-DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX"
+    fi
+    bash -c "cd '$BASE/target/build/$T-$B'; cmake $TOOLCHAIN_ARGS -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOS=$OS -DARCH=$ARCH '$BASE'; make $VERBOSE install"
     R=$?
     if [[ $R != 0 ]]; then
       echo "$T-$B build failed"

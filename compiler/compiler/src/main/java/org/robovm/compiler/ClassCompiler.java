@@ -700,7 +700,7 @@ public class ClassCompiler {
         }
         
         String infoStructLabel = labelPrefix + Symbols.infoStructSymbol(clazz.getInternalName());
-        Pattern methodImplPattern = Pattern.compile("\\s*\\.(?:quad|long)\\s+\"?(" 
+        Pattern methodImplPattern = Pattern.compile("\\s*\\.(?:quad|long|word|xword)\\s+\"?("
                 + Pattern.quote(labelPrefix + Symbols.methodSymbolPrefix(clazz.getInternalName())) 
                 + "[^\\s\"]+)\"?.*");
         
@@ -750,9 +750,13 @@ public class ClassCompiler {
                     if (functionNames.contains(functionName)) {
                         line = in.readLine();
                         if (line.contains(String.valueOf(DUMMY_METHOD_SIZE))) {
-                            out.write("\t.long\t");
-                            out.write("\"" + localLabelPrefix + functionName + "_end\" - \"" + functionName + "\"");
+                            String patchedLine = line.replace(String.valueOf(DUMMY_METHOD_SIZE),
+                                    "\"" + localLabelPrefix + functionName + "_end\" - \"" + functionName + "\"");
+                            out.write(patchedLine);
+                            //out.write("\t.long\t");
+                            //out.write("\"" + localLabelPrefix + functionName + "_end\" - \"" + functionName + "\"");
                             out.write('\n');
+                            functionNames.remove(functionName);
                         } else {
                             out.write(line);
                             out.write('\n');
@@ -760,6 +764,12 @@ public class ClassCompiler {
                     }
                 }
             }
+
+            if (!functionNames.isEmpty()) {
+                config.getLogger().warn("Failed to patch class %s  with method sizes for methods %s",
+                        clazz.getClassName(), functionNames);
+            }
+
         } finally {
             IOUtils.closeQuietly(in);
             IOUtils.closeQuietly(out);

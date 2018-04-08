@@ -374,8 +374,10 @@ public class ToolchainUtil {
              * unless we find a better solution
              */
             opts.add("-w");
-        } else {
-            opts.add(config.getArch().is32Bit() ? "-m32" : "-m64");
+        } else { // Linux
+            if (!config.getArch().isArm()) {
+                opts.add(config.getArch().is32Bit() ? "-m32" : "-m64");
+            }
             for (File objectsFile : objectsFiles) {
                 opts.add("@" + objectsFile.getAbsolutePath());
             }
@@ -394,6 +396,10 @@ public class ToolchainUtil {
                 ccPath = getIOSSimClang();
             } else {
                 ccPath = getIOSDevClang();
+            }
+        } else if (config.getOs() == OS.linux) {
+            if (config.getArch() == Arch.arm64) {
+                ccPath = "aarch64-linux-gnu-g++";
             }
         }
         return ccPath;

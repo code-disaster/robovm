@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Merges the object files in a sttaic lib into a single object file and
+# Merges the object files in a static lib into a single object file and
 # overwrites the static lib with a new static lib only containing this single
 # object file. Will not do anything if CMAKE_BUILD_TYPE is 'debug' as it
 # destroys the debug info. Only the specified symbols will be externally
@@ -46,11 +46,12 @@ function(merge_static_lib_object_files lib)
 
     else()
       # Linux
-      set(EMULATION_MODE elf_i386)
-      if(64_BIT)
-        set(EMULATION_MODE elf_x86_64)
+      set(CC_MERGE_FLAGS)
+      if(X86)
+        set(CC_MERGE_FLAGS "-m32")
+      elseif(X86_64)
+        set(CC_MERGE_FLAGS "-m64")
       endif()
-      message(STATUS "Format ${FORMAT}")
 
       foreach(sym ${exported_symbols})
         list(APPEND exported_symbols_args "-G")
@@ -61,12 +62,12 @@ function(merge_static_lib_object_files lib)
       string(REPLACE ";" " " exported_symbols_args_joined "${exported_symbols_args}")
       add_custom_command(TARGET ${lib}
         COMMAND echo Merging object files in $<TARGET_FILE:${lib}> with exported symbols: ${exported_symbols_joined}
-        COMMAND echo ld -m ${EMULATION_MODE} -r --whole-archive $<TARGET_FILE:${lib}> -o ${CMAKE_CURRENT_BINARY_DIR}/tmp.o
-        COMMAND ld -m ${EMULATION_MODE} -r --whole-archive $<TARGET_FILE:${lib}> -o ${CMAKE_CURRENT_BINARY_DIR}/tmp.o
-        COMMAND echo objcopy -w ${exported_symbols_args} ${CMAKE_CURRENT_BINARY_DIR}/tmp.o ${CMAKE_CURRENT_BINARY_DIR}/merged.o
-        COMMAND objcopy -w ${exported_symbols_args} ${CMAKE_CURRENT_BINARY_DIR}/tmp.o ${CMAKE_CURRENT_BINARY_DIR}/merged.o
+        COMMAND echo ${CMAKE_C_COMPILER} ${CC_MERGE_FLAGS} -Wl,-r -Wl,--whole-archive -Wl,$<TARGET_FILE:${lib}> -nostdlib -nodefaultlibs -o ${CMAKE_CURRENT_BINARY_DIR}/tmp.o
+        COMMAND ${CMAKE_C_COMPILER} ${CC_MERGE_FLAGS} -Wl,-r -Wl,--whole-archive -Wl,$<TARGET_FILE:${lib}> -nostdlib -nodefaultlibs -o ${CMAKE_CURRENT_BINARY_DIR}/tmp.o
+        COMMAND echo ${CMAKE_OBJCOPY} -w ${exported_symbols_args} ${CMAKE_CURRENT_BINARY_DIR}/tmp.o ${CMAKE_CURRENT_BINARY_DIR}/merged.o
+        COMMAND ${CMAKE_OBJCOPY} -w ${exported_symbols_args} ${CMAKE_CURRENT_BINARY_DIR}/tmp.o ${CMAKE_CURRENT_BINARY_DIR}/merged.o
         COMMAND rm -f $<TARGET_FILE:${lib}>
-        COMMAND ar rcs $<TARGET_FILE:${lib}> ${CMAKE_CURRENT_BINARY_DIR}/merged.o
+        COMMAND ${CMAKE_AR} rcs $<TARGET_FILE:${lib}> ${CMAKE_CURRENT_BINARY_DIR}/merged.o
       )
 
     endif()

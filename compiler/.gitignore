@@ -7,5 +7,7 @@
 /llvm/target/
 /objc/target/
 /rt/target/
+/tests/robovm/target/
 /vm/target/
+/vm/cmake-build-*/
 /target/

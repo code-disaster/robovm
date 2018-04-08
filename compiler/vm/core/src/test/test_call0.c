@@ -330,17 +330,24 @@ static void testCall0StackAlignment1(CuTest* tc) {
 }
 static void testCall0StackAlignment2(CuTest* tc) {
 }
-#elif defined(RVM_ARM64) && defined(DARWIN)
+#elif defined(RVM_ARM64) && (defined(DARWIN) || defined(LINUX))
 /*
  * On ARM64 Darwin the stack must be 16-byte aligned before a function call. 
  * This means that (sp & 0xf) == 0 must be true when that function is entered (a 
  * separate register (lr) is used to store the return address so the stack is
  * not involved).
  */
+#ifdef LINUX
+asm("stackPointer:     \n\
+        mov x0, sp     \n\
+        ret            \n\
+");
+#else
 asm("_stackPointer:    \n\
         mov x0, sp     \n\
         ret            \n\
 ");
+#endif
 void* stackPointer(void);
 static void testCall0StackAlignment1(CuTest* tc) {
     // The first 8 ptr/int values are passed in registers. We need to push
