@@ -674,7 +674,9 @@ public class AppCompiler {
                 i++;
             }
 
-            builder.archs(archs.toArray(new Arch[archs.size()]));
+            if (archs.size() > 0) {
+                builder.archs(archs.toArray(new Arch[archs.size()]));
+            }
             builder.stripArchivesBuilder(stripArchivesBuilder);
 
             while (i < args.length) {
