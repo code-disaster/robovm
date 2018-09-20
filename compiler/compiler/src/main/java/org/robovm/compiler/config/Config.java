@@ -1159,7 +1159,8 @@ public class Config {
             if (config.archs == null) {
                 config.archs = new ArrayList<>();
             }
-            config.archs.clear();
+            // TODO dludwig - this clears archs set by .xml
+            //config.archs.clear();
             config.archs.addAll(archs);
             return this;
         }
