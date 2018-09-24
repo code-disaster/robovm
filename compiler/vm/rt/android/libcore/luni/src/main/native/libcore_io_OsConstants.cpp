@@ -27,7 +27,7 @@
 #include <poll.h>
 #include <signal.h>
 #include <stdlib.h>
-#if !defined(__APPLE__)
+#if !defined(__APPLE__) && !defined(RVM_NO_SYSCAPS)
 // RoboVM note: Darwin doesn't have sys/capability.h
 #include <sys/capability.h>
 #endif
@@ -63,7 +63,7 @@ extern "C" void Java_libcore_io_OsConstants_initConstants(JNIEnv* env, jclass c)
     initConstant(env, c, "AI_PASSIVE", AI_PASSIVE);
     initConstant(env, c, "AI_V4MAPPED", AI_V4MAPPED);
 // RoboVM note: Darwin doesn't have sys/capability.h
-#if !defined(__APPLE__)
+#if !defined(__APPLE__) && !defined(RVM_NO_SYSCAPS)
     initConstant(env, c, "CAP_AUDIT_CONTROL", CAP_AUDIT_CONTROL);
     initConstant(env, c, "CAP_AUDIT_WRITE", CAP_AUDIT_WRITE);
     initConstant(env, c, "CAP_CHOWN", CAP_CHOWN);

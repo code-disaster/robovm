@@ -859,7 +859,7 @@ extern "C" jobject Java_libcore_io_Posix_getsockoptUcred(JNIEnv* env, jobject, j
 #endif
 
 // RoboVM note: Darwin doesn't have gettid()
-#if !defined(__APPLE__)
+#if !defined(__APPLE__) && !defined(RVM_NO_GETID)
 extern "C" jint Java_libcore_io_Posix_gettid(JNIEnv*, jobject) {
   // Neither bionic nor glibc exposes gettid(2).
   return syscall(__NR_gettid);

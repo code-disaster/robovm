@@ -31,7 +31,7 @@
 #include "utlist.h"
 #include <unistd.h>
 
-#if !defined(NDEBUG)
+#if !defined(NDEBUG) && !defined(RVM_NO_BACKTRACE)
 #   include <execinfo.h>
 #endif
 
@@ -530,7 +530,7 @@ void rvmAbort(char* format, ...) {
         va_end(args);
         fprintf(stderr, "\n");
     }
-#if !defined(NDEBUG)
+#if !defined(NDEBUG) && !defined(RVM_NO_BACKTRACE)
      void* callstack[256];
      int frames = backtrace(callstack, 256);
      char** strs = backtrace_symbols(callstack, frames);
