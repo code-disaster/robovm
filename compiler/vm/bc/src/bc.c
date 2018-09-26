@@ -99,9 +99,15 @@ static int bcmain(int argc, char* argv[]) {
     return result;
 }
 
+#ifndef ROBOVM_STATIC_LIB
 int __attribute__ ((weak)) main(int argc, char* argv[]) {
     bcmain( argc, argv );
 }
+#else
+int rvmMain(int argc, char* argv[]) {
+    bcmain( argc, argv );
+}
+#endif
 
 static ClassInfoHeader** getClassInfosBase(void* hash) {
     uint32_t size = ((uint32_t*) hash)[1];

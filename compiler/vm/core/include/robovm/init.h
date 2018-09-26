@@ -34,5 +34,9 @@ extern jboolean rvmHasDynamicLib(Env* env, DynamicLib* lib, DynamicLib* libs);
 extern void rvmAddDynamicLib(Env* env, DynamicLib* lib, DynamicLib** libs);
 extern void* rvmFindDynamicLibSymbol(Env* env, DynamicLib* first, const char* symbol, jboolean searchAll);
 
+#ifdef ROBOVM_STATIC_LIB
+extern int rvmMain(int argc, char* argv[]);
+#endif
+
 #endif
 
