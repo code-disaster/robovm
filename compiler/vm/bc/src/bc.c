@@ -101,11 +101,11 @@ static int bcmain(int argc, char* argv[]) {
 
 #ifndef ROBOVM_STATIC_LIB
 int __attribute__ ((weak)) main(int argc, char* argv[]) {
-    bcmain( argc, argv );
+    return bcmain( argc, argv );
 }
 #else
 int rvmMain(int argc, char* argv[]) {
-    bcmain( argc, argv );
+	return bcmain( argc, argv );
 }
 #endif
 
