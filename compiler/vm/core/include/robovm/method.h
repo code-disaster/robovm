@@ -36,6 +36,7 @@
 // The maximum number of CallStackFrames returned by rvmCaptureCallStack() including native frames
 #define MAX_CALL_STACK_LENGTH 2048
 
+extern jboolean rvmInitNativeLocks(Env* env);
 extern jboolean rvmInitMethods(Env* env);
 extern const char* rvmGetReturnType(const char* desc);
 extern const char* rvmGetNextParameterType(const char** desc);

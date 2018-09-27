@@ -105,13 +105,18 @@ static Method* getMethod(Env* env, Class* clazz, const char* name, const char* d
     return NULL;
 }
 
+jboolean rvmInitNativeLocks(Env* env) {
+	if (rvmInitMutex(&nativeLibsLock) != 0) {
+		return FALSE;
+	}
+	if (rvmInitMutex(&threadStackTraceLock) != 0) {
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
 jboolean rvmInitMethods(Env* env) {
-    if (rvmInitMutex(&nativeLibsLock) != 0) {
-        return FALSE;
-    }
-    if (rvmInitMutex(&threadStackTraceLock) != 0) {
-        return FALSE;
-    }
     java_lang_StackTraceElement = rvmFindClassUsingLoader(env, "java/lang/StackTraceElement", NULL);
     if (!java_lang_StackTraceElement) {
         return FALSE;

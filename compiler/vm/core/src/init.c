@@ -350,6 +350,9 @@ Env* rvmStartup(Options* options) {
     if (!initClasspathEntries(env, options->resourcesPath, options->rawBootclasspath, &options->bootclasspath)) return NULL;
     if (!initClasspathEntries(env, options->resourcesPath, options->rawClasspath, &options->classpath)) return NULL;
 
+	TRACE("Initializing native locks");
+	if (!rvmInitNativeLocks(env)) return NULL;
+
     // Add the current image (executable) to the list of native libs used for
     // resolution of native methods in classes loaded by the boot ClassLoader.
     rvmLoadNativeLibrary(env, NULL, NULL);
