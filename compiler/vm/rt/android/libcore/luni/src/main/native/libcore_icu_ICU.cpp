@@ -700,6 +700,8 @@ static bool findCustomICUData(std::string& result) {
 #if (__APPLE__)
     std::string exePath = getExecutablePath();
     std::string basePath = dirname((char*) exePath.c_str());
+#elif defined(RVM_ICUBASEPATH)
+	std::string basePath = RVM_ICUBASEPATH;
 #else
     // TODO: Implement custom ICU data lookup on Linux.
     std::string basePath = "/usr/share/icu";
