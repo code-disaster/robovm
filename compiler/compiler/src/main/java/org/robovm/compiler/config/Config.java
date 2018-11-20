@@ -261,7 +261,11 @@ public class Config {
     }
 
     public String getExecutableName() {
-        return executableName;
+        if (linkStaticLib) {
+            return "lib" + executableName + ".a";
+        } else {
+            return executableName;
+        }
     }
 
     public String getImageName() {

@@ -557,17 +557,21 @@ public abstract class AbstractTarget implements Target {
         if (!config.getTmpDir().equals(installDir) || !image.equals(config.getExecutableName())) {
             File destFile = new File(installDir, image);
             FileUtils.copyFile(new File(config.getTmpDir(), config.getExecutableName()), destFile);
-            destFile.setExecutable(true, false);
-        }
-        for (File f : config.getOsArchDepLibDir().listFiles()) {
-            if (f.getName().matches(".*\\.(so|dylib)(\\.1)?")) {
-                FileUtils.copyFileToDirectory(f, installDir);
+            if (!config.isLinkStaticLib()) {
+                destFile.setExecutable(true, false);
             }
         }
-        stripArchives(installDir);
-        copyResources(resourcesDir);
-        copyDynamicFrameworks(installDir);
-        copyAppExtensions(installDir);
+        if (!config.isLinkStaticLib()) {
+            for (File f : config.getOsArchDepLibDir().listFiles()) {
+                if (f.getName().matches(".*\\.(so|dylib)(\\.1)?")) {
+                    FileUtils.copyFileToDirectory(f, installDir);
+                }
+            }
+            stripArchives(installDir);
+            copyResources(resourcesDir);
+            copyDynamicFrameworks(installDir);
+            copyAppExtensions(installDir);
+        }
     }
 
     public Process launch(LaunchParameters launchParameters) throws IOException {
