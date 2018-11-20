@@ -196,10 +196,12 @@ public class Config {
     private File tmpDir;
     private File cacheDir = new File(System.getProperty("user.home"), ".robovm/cache");
     private File ccBinPath = null;
+    private File arBinPath = null;
 
     private boolean clean = false;
     private boolean debug = false;
     private boolean useDebugLibs = false;
+    private boolean linkStaticLib = false;
     private boolean skipLinking = false;
     private boolean skipInstall = false;
     private boolean dumpIntermediates = false;
@@ -282,6 +284,10 @@ public class Config {
         return ccBinPath;
     }
 
+    public File getArBinPath() {
+        return arBinPath;
+    }
+
     public OS getOs() {
         return os;
     }
@@ -317,6 +323,10 @@ public class Config {
 
     public boolean isUseDebugLibs() {
         return useDebugLibs;
+    }
+
+    public boolean isLinkStaticLib() {
+        return linkStaticLib;
     }
 
     public boolean isDumpIntermediates() {
@@ -1231,6 +1241,16 @@ public class Config {
 
         public Builder ccBinPath(File ccBinPath) {
             config.ccBinPath = ccBinPath;
+            return this;
+        }
+
+        public Builder linkStaticLib(boolean b) {
+            config.linkStaticLib = b;
+            return this;
+        }
+
+        public Builder arBinPath(File arBinPath) {
+            config.arBinPath = arBinPath;
             return this;
         }
 

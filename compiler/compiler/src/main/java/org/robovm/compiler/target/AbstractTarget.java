@@ -273,6 +273,7 @@ public abstract class AbstractTarget implements Target {
             List<String> libs) throws IOException {
 
         ToolchainUtil.link(config, ccArgs, objectFiles, libs, outFile);
+        ToolchainUtil.linkStaticLib(config, objectFiles, outFile);
     }
 
     protected String getExecutable() {

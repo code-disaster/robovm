@@ -556,6 +556,10 @@ public class AppCompiler {
                     printVersionAndExit();
                 } else if ("-cc".equals(args[i])) {
                     builder.ccBinPath(new File(args[++i]));
+                } else if ("-staticlib".equals(args[i])) {
+                    builder.linkStaticLib(true);
+                } else if ("-ar".equals(args[i])) {
+                    builder.arBinPath(new File(args[++i]));
                 } else if ("-os".equals(args[i])) {
                     String s = args[++i];
                     builder.os("auto".equals(s) ? null : OS.valueOf(s));
@@ -901,6 +905,10 @@ public class AppCompiler {
         System.err.println("  -dump-intermediates   Dump intermediate files like assembler files and LLVM bitcode\n" 
                          + "                        files to disk under ~/.robovm/cache/ or where the cache is.");
         System.err.println("  -cc <path>            Path to the c compiler binary. gcc and clang are supported.");
+        System.err.println("  -staticlib            Do not link a binary, but build a static library instead.\n"
+                         + "                        The library will only contain compiled class files - the RoboVM\n"
+                         + "                        runtime and any additional link libraries will be ignored.");
+        System.err.println("  -ar <path>            Path to the archiver binary. Only used if -staticlib is specified.");
         System.err.println("  -home <dir>           Directory where RoboVM runtime has been installed.\n"
                          + "                        Default is $ROBOVM_HOME. If not set the following paths\n" 
                          + "                        will be searched: ~/Applications/robovm/, ~/.robovm/home/,\n" 

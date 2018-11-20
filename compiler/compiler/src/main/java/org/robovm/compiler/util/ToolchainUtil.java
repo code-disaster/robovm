@@ -347,7 +347,11 @@ public class ToolchainUtil {
 
     public static void link(Config config, List<String> args, List<File> objectFiles, List<String> libs, File outFile)
             throws IOException {
-        
+
+        if (config.isLinkStaticLib()) {
+            return;
+        }
+
         boolean isDarwin = config.getOs().getFamily() == OS.Family.darwin;
         /*
          * The Xcode linker doesn't need paths with spaces to be quoted and will
@@ -403,5 +407,35 @@ public class ToolchainUtil {
             }
         }
         return ccPath;
+    }
+
+    public static void linkStaticLib(Config config, List<File> objectFiles, File outFile)
+            throws IOException {
+
+        if (!config.isLinkStaticLib()) {
+            return;
+        }
+
+        // TODO only supported on Linux - check link() above for Darwin
+        List<File> objectsFiles = writeObjectsFiles(config, objectFiles, Integer.MAX_VALUE, true);
+
+        List<String> opts = new ArrayList<String>();
+        for (File objectsFile : objectsFiles) {
+            opts.add("@" + objectsFile.getAbsolutePath());
+        }
+
+        new Executor(config.getLogger(), getArPath(config)).args("rcs", outFile, opts).exec();
+    }
+
+    private static String getArPath(Config config) throws IOException {
+        String arPath = "ar";
+        if (config.getArBinPath() != null) {
+            arPath = config.getArBinPath().getAbsolutePath();
+        } else if (config.getOs() == OS.linux) {
+            if (config.getArch() == Arch.arm64) {
+                arPath = "aarch64-linux-gnu-ar";
+            }
+        }
+        return arPath;
     }
 }
