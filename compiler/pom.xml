@@ -163,9 +163,9 @@
     <module>libimobiledevice</module>
     <module>compiler</module>
     <module>rt</module>
-    <module>cacerts</module>
+    <!--<module>cacerts</module>
     <module>objc</module>
-    <module>cocoatouch</module>
+    <module>cocoatouch</module>-->
   </modules>
 </project>
 
